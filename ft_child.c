@@ -6,11 +6,18 @@
 /*   By: mben-sal <mben-sal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 17:39:22 by mben-sal          #+#    #+#             */
-/*   Updated: 2023/01/12 12:35:35 by mben-sal         ###   ########.fr       */
+/*   Updated: 2023/01/14 14:15:33 by mben-sal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./pipex.h"
+
+int	open_file(char **spl, char *file)
+{
+	ft_free(spl);
+	ft_printf("pipex: %s: %s\n", strerror(errno), file);
+	return (0);
+}
 
 int	first_child(char *cmd1, char **av, char **env, int *pipfd)
 {
@@ -19,9 +26,9 @@ int	first_child(char *cmd1, char **av, char **env, int *pipfd)
 	char	**spl;
 
 	spl = ft_split(av[2], ' ');
-	fd = open(av[1], O_RDONLY | O_APPEND);
+	fd = open(av[1], O_RDONLY);
 	if (fd < 0)
-		return (ft_printf("pipex: %s: %s\n", strerror(errno), av[1]));
+		return (open_file(spl, av[1]));
 	pid = fork();
 	if (pid == -1)
 		return (ft_printf("pipex: %s\n", strerror(errno)));
@@ -48,7 +55,7 @@ int	second_child(char *cmd2, char **av, char **env, int *pipfd)
 	spl = ft_split(av[3], ' ');
 	fd = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (fd < 0)
-		return (ft_printf("pipex: %s: %s\n", strerror(errno), av[4]));
+		return (open_file(spl, av[4]));
 	pid = fork();
 	if (pid == -1)
 		return (ft_printf("pipex: %s\n", strerror(errno)));
